@@ -101,14 +101,10 @@ DateOfBirth.prototype.disableSubmitButton = function() {
 DateOfBirth.prototype.executeCallback = function(original_event) {
   switch (this.date.isAgeValid()) {
     case true:
-      var customEvent = new Event("valid");
-      customEvent.originalEvent = original_event;
-      this.events.valid(customEvent);
+      this.events.valid(original_event);
       break;
     case false:
-      var customEvent = new Event("invalid");
-      customEvent.originalEvent = original_event;
-      this.events.invalid(customEvent);
+      this.events.invalid(original_event);
       break;
   }
 };
@@ -151,6 +147,9 @@ function DateOfBirthDateNodeSelectElement(parent, element) {
   this.parent = parent;
   this.element.optionsList = Array.prototype.slice.call(this.element.children);
   this.element.optionsListInvalid = new Array();
+
+  // Reset On Load
+  this.reset();
 }
 
 // Extends DateOfBirth
@@ -166,6 +165,7 @@ DateOfBirthDateNodeSelectElement.prototype.on = function(event_type, callback) {
 };
 
 DateOfBirthDateNodeSelectElement.prototype.reset = function() {
+  this.element.selectedIndex = 0;
   this.element.value = this.element.item(0).value;
   return this;
 };
@@ -221,10 +221,12 @@ function DateOfBirthDateNodeSubmitElement(element) {
 }
 
 DateOfBirthDateNodeSubmitElement.prototype.disable = function() {
+  if (this.element.disabled) return;
   this.element.disabled = true;
 };
 
 DateOfBirthDateNodeSubmitElement.prototype.enable = function() {
+  if (!this.element.disabled) return;
   this.element.disabled = false;
 };
 
